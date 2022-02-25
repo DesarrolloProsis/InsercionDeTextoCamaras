@@ -91,7 +91,6 @@ namespace TextInsertion
             mcTypeDomo_2 = Camera.DetectCameraType(IPM.IPDOME_2);
             String[] TextInsertLines = null;
             String[] TextInsertLinesOld = null;
-
             TextInsertLines = File.ReadAllLines(@"C:\CAPUFE\VOIE\VIDEO\VideoTxt.txt");
             //TextInsertLines = File.ReadAllLines(@"\\192.168.0.132\CAPUFE\VOIE\VIDEO\VideoTxt.txt");
             TextInsertLinesOld = EscapeS(TextInsertLines);

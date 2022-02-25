@@ -52,6 +52,7 @@ namespace TextInsertion
         {
 
         }
+        //Devuelve el tipo de cámara
         public static CameraType DetectCameraType(IPAddress ip)
         {        
             Camera mCAM = new Default();
@@ -66,7 +67,7 @@ namespace TextInsertion
             {
                 if (ip != null)
                 {
-                    WR = Camera.HTTPRequest(URLcgiContext, NCcgi, WebRequestMethods.Http.Get);                    
+                    WR = Camera.HTTPRequest(URLcgiContext, NCcgi, WebRequestMethods.Http.Get);//Método local
                     if (WR.Item1 == null)
                     {
                         WR = Camera.HTTPRequest(URLcgiDomo, NCcgi, WebRequestMethods.Http.Get); 
@@ -242,7 +243,16 @@ namespace TextInsertion
 
             Process.Start(startInfo);
             Logger.MessageLog(Command);
-        } 
+        }
+
+        /// <summary>
+        /// Método local de petición http
+        /// </summary>
+        /// <param name="URL"></param>
+        /// <param name="nc"></param>
+        /// <param name="Method"></param>
+        /// <param name="Data"></param>
+        /// <returns></returns>
         public static Tuple<WebResponse, String> HTTPRequest(String URL, NetworkCredential nc, String Method, String Data = "") //, WebRequestMethods.Http WRMethod
         {
             //WebRequest Request = WebRequest.Create(URL);

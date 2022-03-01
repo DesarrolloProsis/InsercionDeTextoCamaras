@@ -298,13 +298,13 @@ namespace TextInsertion
                         response.Close();
                     }
                     catch (Exception e)
-                    {
+                    {//Registra el error en el archivo de log
                         TextInsertion.Logger.ErrorMessages(e);
                     }
                     break;
                 case "PUT":
                     Request.ContentType = "application/x-www-form-urlencoded";
-                    //Request.ContentType = "application/xml";                    
+                    //Request.ContentType = "application/xml";            
                     Request.ContentLength = byteArray.Length;
                     Request.Headers.Set("Authorization", "Basic YWRtaW46YWRtaW4xMjM0");
                     Request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0";

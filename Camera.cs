@@ -31,7 +31,8 @@ namespace TextInsertion
         Camera mCAM;
         static NetworkCredential NCcgi = new NetworkCredential("Admin", "1234");
         static NetworkCredential NChttp = new NetworkCredential("admin", "admin1234");
-        static CookieContainer c = new CookieContainer();
+        //No se usa
+        //static CookieContainer c = new CookieContainer();
         public Timer mtSyncTimer;
         //Task tSyncTimerTask;
         public Camera()
@@ -40,43 +41,48 @@ namespace TextInsertion
             mtSyncTimer.AutoReset = false;
             mtSyncTimer.Elapsed += new System.Timers.ElapsedEventHandler(TimeSyncLane);
         }
+        //No se usa
+        //public virtual String BuildCommand(IPAddress ip)
+        //{
+        //    String CGI = null;
+        //    //String USERPASS = "http://Admin:1234@";
+        //    CGI = ip + @"/params/get.cgi?General.ProductName";
+        //    return CGI;
+        //}
+        //public virtual void Configure()
+        //{
 
-        public virtual String BuildCommand(IPAddress ip)
-        {
-            String CGI = null;
-            //String USERPASS = "http://Admin:1234@";
-            CGI = ip + @"/params/get.cgi?General.ProductName";
-            return CGI;
-        }
-        public virtual void Configure()
-        {
-
-        }
+        //}
         //Devuelve el tipo de cámara
         public static CameraType DetectCameraType(IPAddress ip)
         {        
             Camera mCAM = new Default();
-
+            //API Common Gateway Interface ("Interfaz de Entrada Común")
             String URLcgiContext = @"http://" + ip + "/params/get.cgi?General.ProductName";
             String URLcgiDomo = @"http://" + ip + "/cgi-bin/admin/param.cgi?action=list&group=Brand.ProdFullName";
+            //API html
             String URLhttp = @"http://" + ip + "/ISAPI/System/deviceInfo";//Video/inputs/channels/1/overlays/text/2";
             String model = null;
             Tuple<WebResponse, String> WR;            
             
             try
-            {
+            {//Si alguna de las peticiones HTTP con CGI genera un error en tiempo de ejecución, utiliza la petición html
                 if (ip != null)
                 {
                     WR = Camera.HTTPRequest(URLcgiContext, NCcgi, WebRequestMethods.Http.Get);//Método local
+                    //Si la primera petición CGI devuelve una respuesta vacía, se utiliza la siguiente petición (URLcgiDomo)
                     if (WR.Item1 == null)
                     {
                         WR = Camera.HTTPRequest(URLcgiDomo, NCcgi, WebRequestMethods.Http.Get); 
                     }
-                    if (((HttpWebResponse)WR.Item1).StatusDescription == "OK")
+                    if (((HttpWebResponse)WR.Item1).StatusDescription == "OK")//Continúa si hay una respuesta afirmativa de la petición http
                     {
+                        //Si dentro de la respuesta del servidor se encuentra alguna de esas palabras, continúa
                         if (WR.Item2.Contains("ProductName") || WR.Item2.Contains("ProdFullName"))
                         {
                             //deviceName = WR.Item2.Substring(WR.Item2.IndexOf('=')+1, WR.Item2.IndexOf('-')+1 - WR.Item2.IndexOf('='));
+                            //Se busca dentro del texto de la respuesta del servidor un fracmento que coincida con uno de los tipos de las cámaras
+                            //que se tienen. Se asigna la constante correspondiente del enum CameraType, genera una entrada en el log y regresa esa constante
                             if (WR.Item2.Contains("BC620"))
                             {
                                 Program.l.CType = CameraType.BC620;
@@ -120,14 +126,19 @@ namespace TextInsertion
             catch (Exception)
             {
                 Program.l.CType = CameraType.Default;
+                //Cuando se genera una error devido a que la cámara no cuenta con interfaz CGI (utlizada en el paso anterior), genera una entrada en el log
                 TextInsertion.Logger.MessageLog("Camera with IP:" + ip + " has no CGI interface");
+                //Petición http para obtener información de la cámara
                 WR = Camera.HTTPRequest(URLhttp, NChttp, WebRequestMethods.Http.Get);
+                //Continúa si la respuesta de la petición no está vacía
                 if (WR.Item1 != null)
-                {
+                {   //Si el estatus de la respuesta es afirmativo =>
                     if (((HttpWebResponse)WR.Item1).StatusDescription == "OK")
                     {
                         xmlreader xmlR = new xmlreader();
                         model = xmlR.XmlParser(WR.Item2, "model");
+                        //Dentro de la respuesta del servidor se busca alguna coincidencia con los modelos de cámara que se tienen para html.
+                        //Se asigna la constante correspondiente del enum CameraType, genera una entrada en el log y regresa esa constante
                         if (model.Contains("BC1103"))
                         {
                             Program.l.CType = CameraType.BC1103;
@@ -246,12 +257,12 @@ namespace TextInsertion
         }
 
         /// <summary>
-        /// Método local de petición http
+        /// Método local de petición http, sólo GET y PUT
         /// </summary>
-        /// <param name="URL"></param>
-        /// <param name="nc"></param>
-        /// <param name="Method"></param>
-        /// <param name="Data"></param>
+        /// <param name="URL">Petición Web</param>
+        /// <param name="nc">Usuario y contraseña del dispositivo</param>
+        /// <param name="Method">Método del protocolo HTTP</param>
+        /// <param name="Data">Comando en PUT, opcional</param>
         /// <returns></returns>
         public static Tuple<WebResponse, String> HTTPRequest(String URL, NetworkCredential nc, String Method, String Data = "") //, WebRequestMethods.Http WRMethod
         {
@@ -274,11 +285,15 @@ namespace TextInsertion
                 case "GET":
                     try
                     {
+                        //Regresa la respuesta del recurso de red
                         response = (HttpWebResponse)Request.GetResponse();
+                        //Registra en el Log la petición Web
                         TextInsertion.Logger.MessageLog(URL);
+                        //Asigana el flujo de datos del recurso de red solicitado
                         reader = new StreamReader(response.GetResponseStream());
                         responseFromServer = reader.ReadToEnd();
                         reader.Close();
+                        //Registra en el Log la respuesta del recurso de red
                         TextInsertion.Logger.ResponseMessages(response.StatusDescription);
                         response.Close();
                     }

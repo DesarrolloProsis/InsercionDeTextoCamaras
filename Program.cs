@@ -85,10 +85,16 @@ namespace TextInsertion
             //IPM.IPDOME = IPAddress.Parse("10.3.25.34");
             //IPM.IPDOME_2 = IPAddress.Parse("10.3.25.35");
 
+
+            //Modelos fuera del chatch
+            //BC620, BC840, IFD820
+            //Modelos dentro del catch
+            //BC1103, FD1103
             mcTypeContext = Camera.DetectCameraType(IPM.IPCONTEXT);
             mcTypeContext_2 = Camera.DetectCameraType(IPM.IPCONTEXT_2);
             mcTypeDomo = Camera.DetectCameraType(IPM.IPDOME);
             mcTypeDomo_2 = Camera.DetectCameraType(IPM.IPDOME_2);
+            //Crea array con las lineas del archivos que esta en el carril
             String[] TextInsertLines = null;
             String[] TextInsertLinesOld = null;
             TextInsertLines = File.ReadAllLines(@"C:\CAPUFE\VOIE\VIDEO\VideoTxt.txt");
@@ -226,6 +232,7 @@ namespace TextInsertion
                     break;
             }
             //Camera.TSyncTimer = new Timer(Camera.TimeSyncLane, null, 0, 60000);
+            //Preguntar por que solo valida estos dos modelos
             if (mcTypeContext== CameraType.BC1103)
             {
                 mContext.TSyncTimer.Start();
@@ -249,7 +256,8 @@ namespace TextInsertion
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             String FileVersion = fvi.FileVersion;            
-
+            
+            //Configura un fileWatcher para detectar los cambios en el archvios de texto
             FSW.Path = StartFolder;
             FSW.NotifyFilter = NotifyFilters.LastWrite;
             FSW.Filter = "VideoTxt.txt";
@@ -279,6 +287,7 @@ namespace TextInsertion
             //}
         }
 
+        //Metodo que se ejecuta cuando se modifica el archivo
         public static void OnChanged(object source, FileSystemEventArgs e)
         {
             FSW.EnableRaisingEvents = false;
@@ -286,6 +295,8 @@ namespace TextInsertion
             OC_SM.ONCHANGEDBC.Add(e);  
             FSW.EnableRaisingEvents = true;            
         }
+
+        //clase que se encarga de modificar el texto atrapado en un ciclo while
         public class OnChanged_StackManager
         {
             int interval = 1;
@@ -350,6 +361,7 @@ namespace TextInsertion
                 Logger.MessageLog("File: " + e.FullPath + " " + e.ChangeType);
                 
                 TextInsertLines = File.ReadAllLines(e.FullPath);
+                //Formato a las lineas a insertar en la camara
                 TextInsertLinesOld = EscapeS(TextInsertLines);
 
                 if (TextInsertLines.Length >= 3)
@@ -361,8 +373,11 @@ namespace TextInsertion
                     OpenLane = false;
                 }
 
+                //Solo la primera vez que ocurre un evento modifica las dos primera lineas 
                 if (FirstOccurence)
                 {
+                    //Escribe las priemra dos lineas del archivo de texto y lo envia a las camaras 
+                    //Supone que almenos las priemra camara normal y de domo existen valida las otras dos si no estan conectadas o es la default
                     switch (mcTypeContext)
                     {
                         case CameraType.BC620:
@@ -378,7 +393,6 @@ namespace TextInsertion
                             ((BC1103)mContext).Send(IPM.IPCONTEXT, 2, TextInsertLines[1]);
                             break;                    
                     }             
-
                     if (mcTypeContext_2 != CameraType.Default || mcTypeContext_2 != CameraType.Not_Connected)
                     {
                         switch (mcTypeContext_2)
@@ -422,6 +436,9 @@ namespace TextInsertion
                             break;
                         }
                     }
+                    //Escribe la tercera linea en la camara dependiendo de si esta cerrada o si esta abierta
+                    //igual supone que almenos la priemra camara normal y de domo estan conectadas valida las sigientes dos camaras
+                    //solo esscribe en la tercera linea
                     if (OpenLane)
                     {
                         switch (mcTypeContext)
@@ -574,10 +591,14 @@ namespace TextInsertion
                         }
           
                     }
+                    //Indica que ya no es el primer evento de la camara
                     FirstOccurence = false;
                 }
+                //Caso para cuando ya no es la primera concurrecnia solo modifica la primera linea de la camara
                 else
                 {
+                    //Escribe las priemra dos lineas del archivo de texto y lo envia a las camaras 
+                    //Supone que almenos las priemra camara normal y de domo existen valida las otras dos si no estan conectadas o es la default
                     switch (mcTypeContext)
                     {
                         case CameraType.BC620:
@@ -634,6 +655,9 @@ namespace TextInsertion
                                 break;
                         }
                     }
+                    //Escribe la tercera linea en la camara dependiendo de si esta cerrada o si esta abierta
+                    //igual supone que almenos la priemra camara normal y de domo estan conectadas valida las sigientes dos camaras
+                    //solo esscribe en la tercera linea
                     if (OpenLane)
                     {
                         switch (mcTypeContext)

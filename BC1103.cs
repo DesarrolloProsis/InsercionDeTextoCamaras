@@ -40,12 +40,16 @@ namespace TextInsertion
 
         NetworkCredential NChttp = new NetworkCredential("admin", "admin1234");
 
+        //Ruta pra obtener o cargar las lineas de texto de las camaras
         const String PathTextOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays/text/";        
+
+        //Ruta para obtener o cargar las fecha mostrada en la camara
         String XMLTextOverlay = 
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>1</id><enabled>true</enabled><positionX>0</positionX><positionY>0</positionY><displayText></displayText></TextOverlay>";// xmlns=""http://www.std-cgi.com/ver20/XMLSchema""        
         const String PathDateOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays/dateTimeOverlay";
         String XMLDateOverlay =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OsdDatetime version=\"2.0\"><enabled>true</enabled><positionX>0</positionX><positionY>0</positionY><dateStyle>MM-DD-YYYY</dateStyle><timeStyle>24hour</timeStyle><displayWeek>false</displayWeek></OsdDatetime>";
+        //Ruta para obter o cargar la configuracion inicial de la camara define las lineas y la fecha
         const String PathConfigOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays";
 
         String XMLConfigOVerlay =
@@ -95,7 +99,7 @@ namespace TextInsertion
                     			<positionY>410</positionY>
                     			<displayText></displayText>
                     		</TextOverlay>
-                    		</TextOverlayList>
+                    	</TextOverlayList>
                     </VideoOverlay>";
 
         String XMLTimeSync = @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -121,6 +125,7 @@ namespace TextInsertion
             TextInsertion.Logger.MessageLog("Configuring BC1103 ip:" + ip);       
             TextInsertion.Logger.MessageLog(URLhttpConfig);
             TextInsertion.Logger.MessageLog(XMLConfigOVerlay);
+            //Carga la configuracion para las tres lineas de texto
             WR = Camera.HTTPRequest(URLhttpConfig, NChttp, "PUT", XMLConfigOVerlay);
             WR = Camera.HTTPRequest(URLhttpConfig, NChttp, "PUT", XMLConfigOVerlay);
             TextInsertion.Logger.MessageLog("Configuration DONE");
@@ -176,6 +181,8 @@ namespace TextInsertion
                 TextInsertion.Logger.ErrorMessages(e);
             }
         }
+
+        //Metodo que modifica el formato del xml para actualizar el texto en la camara
         public String BuildCommand(String XML, Functionnality f, Parameter cmd, int line = 0, String sValue = "")
         {
             String XMLout = null;
@@ -187,6 +194,7 @@ namespace TextInsertion
 
             switch (f)
             {
+                
                 case Functionnality.TextOverlay:
                     switch (cmd)
                     {

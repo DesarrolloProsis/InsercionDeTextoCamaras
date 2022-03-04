@@ -177,9 +177,12 @@ namespace TextInsertion
             return CameraType.Default;
         }
 
+        //Evento del Timer
         private void TimeSyncLane(object sender, ElapsedEventArgs e)
         {
+            //Detiene la generación del evento
             mtSyncTimer.Stop();
+            //Comprueba los 4 tipos de cámara detectados en la clase principal y asigna ese valor al mcType (tipo de cámara, en un principio es default) del Logger
             switch (Program.CTypeContext)
             {
                 case CameraType.BC620:
@@ -235,14 +238,15 @@ namespace TextInsertion
             //mtSyncTimerTask = Task.Factory.StartNew(() => TimeSyncLane(interval, ct));
             mtSyncTimer.Start();
         }
-
+        //Reemplaza los espacios en blanco multiples por sólo 1
         public static String StripSpaces(String input)
         {
-            //return String.Join(" ", input.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+            //return String.Join(" ", input.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));            
             input = Regex.Replace(input, " {1,}", " ");
             //input = Uri.EscapeUriString(input);
             return input;
         }
+        //No se usa =>
         public static void ExecCurl(String Command)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo("Curl.exe");
@@ -289,7 +293,7 @@ namespace TextInsertion
                         response = (HttpWebResponse)Request.GetResponse();
                         //Registra en el Log la petición Web
                         TextInsertion.Logger.MessageLog(URL);
-                        //Asigana el flujo de datos del recurso de red solicitado
+                        //Asigna el flujo de datos del recurso de red solicitado
                         reader = new StreamReader(response.GetResponseStream());
                         responseFromServer = reader.ReadToEnd();
                         reader.Close();
@@ -303,19 +307,23 @@ namespace TextInsertion
                     }
                     break;
                 case "PUT":
+                    //contiene el tipo de medio de la solicitud
                     Request.ContentType = "application/x-www-form-urlencoded";
                     //Request.ContentType = "application/xml";            
+                    //número de bytes de datos para enviar al recurso de Internet
                     Request.ContentLength = byteArray.Length;
                     Request.Headers.Set("Authorization", "Basic YWRtaW46YWRtaW4xMjM0");
                     Request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0";
                     Request.Headers.Set("cache-control", "no-cache");
-
+                    //Obtiene un objeto Stream que se usará para escribir datos de solicitud
                     dataStream = Request.GetRequestStream();
                     dataStream.Write(byteArray, 0, byteArray.Length);
                     dataStream.Close();
                     try
                     {
+                        //Respuesta del recurso de red
                         response = (HttpWebResponse)Request.GetResponse();
+                        //Asigna el flujo de datos del recurso de red solicitado, lo asigna a un string
                         reader = new StreamReader(response.GetResponseStream());
                         responseFromServer = reader.ReadToEnd();
                         reader.Close();
@@ -335,56 +343,56 @@ namespace TextInsertion
             Tuple<WebResponse, String> Tanswer = new Tuple<WebResponse, string>(response, responseFromServer);
             return Tanswer;
         }
-
-        public static IRestResponse RestRequest(String URL,String id, String enabled, String positionX, String positionY, String displayText, String Data="")
-        {
-            var client = new RestClient(URL);//"http://192.168.0.133/ISAPI/System/Video/inputs/channels/1/overlays/text/1"
-            var request = new RestRequest(Method.PUT);
-            request.AddHeader("cache-control", "no-cache");
-            request.AddHeader("content-type", "application/xml");
-            request.AddHeader("authorization", "Basic YWRtaW46YWRtaW4xMjM0");
-            //request.AddParameter("application/xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>4</id><enabled>true</enabled><positionX>0</positionX><positionY>470</positionY><displayText>XXX TLALPAN ISRAEL PORTILLO AGUILE Carril:A06 Estado:NA 14/03/2016 15:47:11</displayText></TextOverlay>\n", ParameterType.RequestBody);
-            //XmlNamespaceManager nsMgr = new XmlNamespaceManager();
-            //nsMgr.AddNamespace("CGI","http://www.std-cgi.com/ver20/XMLSchema");
-            //object x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>"+id +"</id><enabled>"+enabled+"</enabled><positionX>"+positionX+"</positionX><positionY>"+positionY+"</positionY><displayText>"+displayText+"</displayText></TextOverlay>\n";
-            String x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>" + id + "</id><enabled>" + enabled + "</enabled><positionX>" + positionX + "</positionX><positionY>" + positionY + "</positionY><displayText>" + displayText + "</displayText></TextOverlay>\n";
-            x = Uri.EscapeDataString(x);
-            request.AddParameter("application/xml", x );
+        //No se usa =>
+        //public static IRestResponse RestRequest(String URL,String id, String enabled, String positionX, String positionY, String displayText, String Data="")
+        //{
+        //    var client = new RestClient(URL);//"http://192.168.0.133/ISAPI/System/Video/inputs/channels/1/overlays/text/1"
+        //    var request = new RestRequest(Method.PUT);
+        //    request.AddHeader("cache-control", "no-cache");
+        //    request.AddHeader("content-type", "application/xml");
+        //    request.AddHeader("authorization", "Basic YWRtaW46YWRtaW4xMjM0");
+        //    //request.AddParameter("application/xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>4</id><enabled>true</enabled><positionX>0</positionX><positionY>470</positionY><displayText>XXX TLALPAN ISRAEL PORTILLO AGUILE Carril:A06 Estado:NA 14/03/2016 15:47:11</displayText></TextOverlay>\n", ParameterType.RequestBody);
+        //    //XmlNamespaceManager nsMgr = new XmlNamespaceManager();
+        //    //nsMgr.AddNamespace("CGI","http://www.std-cgi.com/ver20/XMLSchema");
+        //    //object x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>"+id +"</id><enabled>"+enabled+"</enabled><positionX>"+positionX+"</positionX><positionY>"+positionY+"</positionY><displayText>"+displayText+"</displayText></TextOverlay>\n";
+        //    String x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\"><id>" + id + "</id><enabled>" + enabled + "</enabled><positionX>" + positionX + "</positionX><positionY>" + positionY + "</positionY><displayText>" + displayText + "</displayText></TextOverlay>\n";
+        //    x = Uri.EscapeDataString(x);
+        //    request.AddParameter("application/xml", x );
             
-            //request.AddXmlBody(x);
-            IRestResponse response = null;
+        //    //request.AddXmlBody(x);
+        //    IRestResponse response = null;
             
-            //String cmd = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-            //                <TextOverlay version=""2.0"" xmlns=""http://www.std-cgi.com/ver20/XMLSchema"">
-            //                    <id>2</id>
-            //                    <enabled>true</enabled>
-            //                    <positionX>0</positionX>
-            //                    <positionY>544</positionY>
-            //                    <displayText>2222222222</displayText>
-            //                </TextOverlay>";
-            //IRestResponse response = null;
-            //var client = new RestClient(URL);
-            //var request = new RestRequest(Method.PUT);
-            ////request.AddHeader("cache-control", "no-cache");
-            ////request.AddHeader("content-type", "application/xml; charset=\"UTF-8\"");
-            //request.AddHeader("authorization", "Basic YWRtaW46YWRtaW4xMjM0");
-            ////request.AddParameter("text/xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\" xmlns=\"http://www.std-cgi.com/ver20/XMLSchema\"><id>1</id><enabled>true</enabled><positionX>0</positionX><positionY>600</positionY><displayText>pd</displayText></TextOverlay>", ParameterType.RequestBody);
-            //client.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
-            //request.AddParameter("application/xml", Data, ParameterType.RequestBody);
-            ////request.AddBody(Data, "xmlns=\"http://www.isapi.org/ver20/XMLSchema\"");// "http://www.std-cgi.com/ver20/XMLSchema");
-            //request.Credentials = NChttp;
-            try
-            {
-                response = client.Execute(request);                
-                TextInsertion.Logger.ResponseMessages(response.StatusCode.ToString());
-                TextInsertion.Logger.ResponseMessages(response.Content.ToString());
-            }
-            catch (Exception e)
-            {
-                TextInsertion.Logger.ErrorMessages(e);
-            }                        
-            return response;
-        }
+        //    //String cmd = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        //    //                <TextOverlay version=""2.0"" xmlns=""http://www.std-cgi.com/ver20/XMLSchema"">
+        //    //                    <id>2</id>
+        //    //                    <enabled>true</enabled>
+        //    //                    <positionX>0</positionX>
+        //    //                    <positionY>544</positionY>
+        //    //                    <displayText>2222222222</displayText>
+        //    //                </TextOverlay>";
+        //    //IRestResponse response = null;
+        //    //var client = new RestClient(URL);
+        //    //var request = new RestRequest(Method.PUT);
+        //    ////request.AddHeader("cache-control", "no-cache");
+        //    ////request.AddHeader("content-type", "application/xml; charset=\"UTF-8\"");
+        //    //request.AddHeader("authorization", "Basic YWRtaW46YWRtaW4xMjM0");
+        //    ////request.AddParameter("text/xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><TextOverlay version=\"2.0\" xmlns=\"http://www.std-cgi.com/ver20/XMLSchema\"><id>1</id><enabled>true</enabled><positionX>0</positionX><positionY>600</positionY><displayText>pd</displayText></TextOverlay>", ParameterType.RequestBody);
+        //    //client.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+        //    //request.AddParameter("application/xml", Data, ParameterType.RequestBody);
+        //    ////request.AddBody(Data, "xmlns=\"http://www.isapi.org/ver20/XMLSchema\"");// "http://www.std-cgi.com/ver20/XMLSchema");
+        //    //request.Credentials = NChttp;
+        //    try
+        //    {
+        //        response = client.Execute(request);                
+        //        TextInsertion.Logger.ResponseMessages(response.StatusCode.ToString());
+        //        TextInsertion.Logger.ResponseMessages(response.Content.ToString());
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TextInsertion.Logger.ErrorMessages(e);
+        //    }                        
+        //    return response;
+        //}
 
         public Camera CAM
         {

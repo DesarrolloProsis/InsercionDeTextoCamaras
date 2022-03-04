@@ -130,6 +130,8 @@ namespace TextInsertion
             WR = Camera.HTTPRequest(URLhttpConfig, NChttp, "PUT", XMLConfigOVerlay);
             TextInsertion.Logger.MessageLog("Configuration DONE");
         }
+
+        //Metodo que enviar la solicituda para cambiar el texto de la camara
         public void Send(IPAddress ip, int line = 1, String Data = "")
         {
             Program.l.CType = CameraType.BC1103;

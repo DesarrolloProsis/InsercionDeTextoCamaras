@@ -301,6 +301,8 @@ namespace TextInsertion
         {
             int interval = 1;
             public static Boolean IsRunning = false;
+
+            //Coleccion de evento se agrega uno nuevo por cada 
             public static BlockingCollection<FileSystemEventArgs> mOnChangedBC;
             public OnChanged_StackManager()
             {
@@ -312,6 +314,7 @@ namespace TextInsertion
                 {
                     Logger.ErrorMessages(e);
                 }
+                //Ejecuta este metodo solo cuando se crear el constructor
                 runAsyncTasks();
             }
             private void runAsyncTasks()
@@ -319,6 +322,8 @@ namespace TextInsertion
                 CancellationToken ct = new CancellationToken();
                 Task StackMangerTask = Task.Factory.StartNew(() => ConsumeAsync(interval, ct));
             }
+
+            //Metodo que se ejecuta siempre y solo hace algo cuando tiene algun evento en mOnChangedBC estos eventos son los cambios en el archivo
             public void ConsumeAsync(int interval, CancellationToken ct)
             {
                 IsRunning = true;
@@ -359,7 +364,7 @@ namespace TextInsertion
             try
             {
                 Logger.MessageLog("File: " + e.FullPath + " " + e.ChangeType);
-                
+                //Obtiene la ruta desde la collecion de eventos generados por el arvhivo con cada cambio
                 TextInsertLines = File.ReadAllLines(e.FullPath);
                 //Formato a las lineas a insertar en la camara
                 TextInsertLinesOld = EscapeS(TextInsertLines);

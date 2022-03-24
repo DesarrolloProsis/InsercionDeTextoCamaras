@@ -37,10 +37,14 @@ namespace TextInsertion
         String URLhttp = @"http://";
         Tuple<WebResponse, String> WRg;
         Tuple<WebResponse, String> WR;
-
+        /// <summary>
+        /// Autenticación
+        /// </summary>
         NetworkCredential NChttp = new NetworkCredential("admin", "admin1234");
 
-        //Ruta pra obtener o cargar las lineas de texto de las camaras
+        /// <summary>
+        /// Ruta para obtener, actualizar, agregar o borrar el texto de configuración de los overlays
+        /// </summary>
         const String PathTextOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays/text/";        
 
         //Ruta para obtener o cargar las fecha mostrada en la camara
@@ -49,9 +53,13 @@ namespace TextInsertion
         const String PathDateOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays/dateTimeOverlay";
         String XMLDateOverlay =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OsdDatetime version=\"2.0\"><enabled>true</enabled><positionX>0</positionX><positionY>0</positionY><dateStyle>MM-DD-YYYY</dateStyle><timeStyle>24hour</timeStyle><displayWeek>false</displayWeek></OsdDatetime>";
-        //Ruta para obter o cargar la configuracion inicial de la camara define las lineas y la fecha
+        /// <summary>
+        /// Ruta para obter o cargar los overlays de configuracion inicial de una entrada de vídeo
+        /// </summary>
         const String PathConfigOverlay = "/ISAPI/System/Video/inputs/channels/1/overlays";
-
+        /// <summary>
+        /// Variable donde se encuentra la configuración inicial de los overlays de la entrada de vídeo
+        /// </summary>
         String XMLConfigOVerlay =
                 @"<?xml version=""1.0"" encoding=""UTF-8""?>
                     <VideoOverlay xmlns=""http://www.std-cgi.com/ver20/XMLSchema"" version=""2.0"">
@@ -75,8 +83,8 @@ namespace TextInsertion
                     			<displayWeek>false</displayWeek>
                     		</DateTimeOverlay>
                     		<frontColorMode>customize</frontColorMode>
-                    		<frontColor>ffff00</frontColor>
-                    		<edgeColor>000000</edgeColor>
+                    		<frontColor>008000</frontColor>
+                    		<edgeColor>0000FF</edgeColor>
                     		<alignment>customize</alignment>
                     		<TextOverlay>
                     			<id>1</id>
@@ -115,11 +123,12 @@ namespace TextInsertion
             URLhttp += ip + PathTextOverlay;            
             WRg = HTTPRequest(URLhttp, NChttp, "GET"); 
         }
+
         public void Configure(IPAddress ip)
         {
             Program.l.CType = CameraType.BC1103;
-            String URLhttp = @"http://" + ip + PathTextOverlay;
-            String URLhttpDT = @"http://" + ip + PathDateOverlay;
+            //String URLhttp = @"http://" + ip + PathTextOverlay;
+            //String URLhttpDT = @"http://" + ip + PathDateOverlay;
             String URLhttpConfig = @"http://" + ip + PathConfigOverlay;
             Tuple<WebResponse, String> WR;
             TextInsertion.Logger.MessageLog("Configuring BC1103 ip:" + ip);       
@@ -135,6 +144,9 @@ namespace TextInsertion
         public void Send(IPAddress ip, int line = 1, String Data = "")
         {
             Program.l.CType = CameraType.BC1103;
+            /// <summary>
+            /// Ruta para obtener o actualizar la configuración del texto del overlay en la ip y línea específicada
+            /// </summary>
             String URLhttp = @"http://" + ip + "/ISAPI/System/Video/inputs/channels/1/overlays/text/"+ line;
             Tuple<WebResponse, String> WR;
 

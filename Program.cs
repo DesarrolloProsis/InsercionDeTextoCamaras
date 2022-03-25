@@ -87,7 +87,7 @@ namespace TextInsertion
 
 
             //Modelos fuera del chatch
-            //BC620, BC840, IFD820
+            //BC620, BC840, IFD820, BC950
             //Modelos dentro del catch
             //BC1103, FD1103
             mcTypeContext = Camera.DetectCameraType(IPM.IPCONTEXT);
@@ -125,6 +125,12 @@ namespace TextInsertion
                     ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 1, TextInsertLinesOld[0]);
                     ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 2, TextInsertLinesOld[1]);
                     break;
+                case CameraType.BC950://CAMARA NUEVA
+                    mContext = new BC950();
+                    ((BC950)mContext).Configure(mContext, IPM.IPCONTEXT);
+                    ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 1, OpenLane, TextInsertLinesOld[0]);
+                    ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 2, OpenLane, TextInsertLinesOld[1]);
+                    break;
                 case CameraType.BC1103:
                     mContext = new BC1103(IPM.IPCONTEXT);
                     ((BC1103)mContext).Configure(IPM.IPCONTEXT);                    
@@ -153,6 +159,12 @@ namespace TextInsertion
                     ((BC840)mContext_2).Configure(mContext_2, IPM.IPCONTEXT_2);
                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 1, TextInsertLinesOld[0]);
                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, TextInsertLinesOld[1]);
+                    break;
+                case CameraType.BC950://CAMARA NUEVA
+                    mContext = new BC950();
+                    ((BC950)mContext_2).Configure(mContext_2, IPM.IPCONTEXT_2);
+                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 1, OpenLane, TextInsertLinesOld[0]);
+                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, OpenLane, TextInsertLinesOld[1]);
                     break;
                 case CameraType.BC1103:
                     mContext_2 = new BC1103(IPM.IPCONTEXT_2);
@@ -381,8 +393,8 @@ namespace TextInsertion
                 //Solo la primera vez que ocurre un evento modifica las dos primera lineas 
                 if (FirstOccurence)
                 {
-                    //Escribe las priemra dos lineas del archivo de texto y lo envia a las camaras 
-                    //Supone que almenos las priemra camara normal y de domo existen valida las otras dos si no estan conectadas o es la default
+                    //Escribe las primeras dos lineas del archivo de texto y lo envia a las camaras 
+                    //Supone que al menos las camara normal y de domo existen, valida las otras dos si no estan conectadas o es la default
                     switch (mcTypeContext)
                     {
                         case CameraType.BC620:
@@ -392,6 +404,10 @@ namespace TextInsertion
                         case CameraType.BC840:                                    
                             ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 1, TextInsertLinesOld[0]);
                             ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 2, TextInsertLinesOld[1]);
+                            break;
+                        case CameraType.BC950://CAMARA NUEVA
+                            ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 1, OpenLane, TextInsertLinesOld[0]);
+                            ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 2, OpenLane, TextInsertLinesOld[1]);
                             break;
                         case CameraType.BC1103:
                             ((BC1103)mContext).Send(IPM.IPCONTEXT, 1, TextInsertLines[0]);
@@ -409,6 +425,10 @@ namespace TextInsertion
                             case CameraType.BC840:                            
                                 ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 1, TextInsertLinesOld[0]);
                                 ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, TextInsertLinesOld[1]);                            
+                                break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                ((BC950)mContext).Send(mContext_2, IPM.IPCONTEXT_2, 1, OpenLane, TextInsertLinesOld[0]);
+                                ((BC950)mContext).Send(mContext_2, IPM.IPCONTEXT_2, 2, OpenLane, TextInsertLinesOld[1]);
                                 break;
                             case CameraType.BC1103:
                                 ((BC1103)mContext_2).Send(IPM.IPCONTEXT_2, 1, TextInsertLines[0]);
@@ -442,7 +462,7 @@ namespace TextInsertion
                         }
                     }
                     //Escribe la tercera linea en la camara dependiendo de si esta cerrada o si esta abierta
-                    //igual supone que almenos la priemra camara normal y de domo estan conectadas valida las sigientes dos camaras
+                    //igual supone que almenos la primera camara normal y de domo estan conectadas, valida las sigientes dos camaras
                     //solo esscribe en la tercera linea
                     if (OpenLane)
                     {
@@ -455,6 +475,10 @@ namespace TextInsertion
                             case CameraType.BC840:
                                 l.CType = CameraType.BC840;
                                 ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 3, TextInsertLinesOld[2]);
+                                break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                l.CType = CameraType.BC950;
+                                ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 3, OpenLane, TextInsertLinesOld[2]);
                                 break;
                             case CameraType.BC1103:
                                 l.CType = CameraType.BC1103;
@@ -475,6 +499,10 @@ namespace TextInsertion
                                 case CameraType.BC840:
                                     l.CType = CameraType.BC840;
                                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 3, TextInsertLinesOld[2]);
+                                    break;
+                                case CameraType.BC950://CAMARA NUEVA
+                                    l.CType = CameraType.BC950;
+                                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 3, OpenLane, TextInsertLinesOld[2]);
                                     break;
                                 case CameraType.BC1103:
                                     l.CType = CameraType.BC1103;
@@ -532,6 +560,10 @@ namespace TextInsertion
                                 l.CType = CameraType.BC840;
                                 Camera.HTTPRequest(((BC840)mContext).BuildCommand(IPM.IPCONTEXT, BC840.CGICommands.TextAndDate, 3, ""), NChttp, "GET");
                                 break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                l.CType = CameraType.BC950;
+                                ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 3, OpenLane, TextInsertLinesOld[2]);
+                                break;
                             case CameraType.BC1103:
                                 l.CType = CameraType.BC1103;
                                 if (TextInsertLines.Count() > 2)
@@ -551,6 +583,10 @@ namespace TextInsertion
                                 case CameraType.BC840:
                                     l.CType = CameraType.BC840;
                                     Camera.HTTPRequest(((BC840)mContext_2).BuildCommand(IPM.IPCONTEXT_2, BC840.CGICommands.TextAndDate, 3, ""), NChttp, "GET");
+                                    break;
+                                case CameraType.BC950://CAMARA NUEVA
+                                    l.CType = CameraType.BC950;
+                                    ((BC950)mContext).Send(mContext_2, IPM.IPCONTEXT_2, 3, OpenLane, TextInsertLinesOld[2]);
                                     break;
                                 case CameraType.BC1103:
                                     l.CType = CameraType.BC1103;
@@ -614,6 +650,10 @@ namespace TextInsertion
                             l.CType = CameraType.BC840;
                             ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 1, TextInsertLinesOld[0]);
                             break;
+                        case CameraType.BC950://CAMARA NUEVA
+                            l.CType = CameraType.BC950;
+                            ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 1, OpenLane, TextInsertLinesOld[0]);
+                            break;
                         case CameraType.BC1103:
                             ((BC1103)mContext).Send(IPM.IPCONTEXT, 1, TextInsertLines[0]);
                             break;
@@ -629,6 +669,10 @@ namespace TextInsertion
                             case CameraType.BC840:
                                 l.CType = CameraType.BC840;
                                 ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 1, TextInsertLinesOld[0]);
+                                break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                l.CType = CameraType.BC950;
+                                ((BC950)mContext).Send(mContext_2, IPM.IPCONTEXT_2, 1, OpenLane, TextInsertLinesOld[0]);
                                 break;
                             case CameraType.BC1103:
                                 l.CType = CameraType.BC1103;
@@ -677,6 +721,11 @@ namespace TextInsertion
                                 ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 2, TextInsertLinesOld[1]);
                                 ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 3, TextInsertLinesOld[2]);
                                 break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                l.CType = CameraType.BC950;
+                                ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 2, OpenLane, TextInsertLinesOld[1]);
+                                ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 3, OpenLane, TextInsertLinesOld[2]);
+                                break;
                             case CameraType.BC1103:
                                 ((BC1103)mContext).Send(IPM.IPCONTEXT, 2, TextInsertLines[1]);
                                 ((BC1103)mContext).Send(IPM.IPCONTEXT, 3, TextInsertLines[2]);
@@ -695,6 +744,11 @@ namespace TextInsertion
                                     l.CType = CameraType.BC840;
                                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, TextInsertLinesOld[1]);
                                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 3, TextInsertLinesOld[2]);
+                                    break;
+                                case CameraType.BC950://CAMARA NUEVA
+                                    l.CType = CameraType.BC950;
+                                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, OpenLane, TextInsertLinesOld[1]);
+                                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 3, OpenLane, TextInsertLinesOld[2]);
                                     break;
                                 case CameraType.BC1103:
                                     l.CType = CameraType.BC1103;
@@ -746,6 +800,10 @@ namespace TextInsertion
                                 ((BC840)mContext).Send(mContext, IPM.IPCONTEXT, 2, TextInsertLinesOld[1]);
                                 Camera.HTTPRequest(((BC840)mContext).BuildCommand(IPM.IPCONTEXT, BC840.CGICommands.TextAndDate, 3, ""), NChttp, "GET");
                                 break;
+                            case CameraType.BC950://CAMARA NUEVA
+                                l.CType = CameraType.BC950;
+                                ((BC950)mContext).Send(mContext, IPM.IPCONTEXT, 2, OpenLane, TextInsertLinesOld[1]);
+                                break;
                             case CameraType.BC1103:
                                 ((BC1103)mContext).Send(IPM.IPCONTEXT, 2, TextInsertLines[1]);
                                 ((BC1103)mContext).Send(IPM.IPCONTEXT, 3, "");
@@ -764,6 +822,10 @@ namespace TextInsertion
                                     l.CType = CameraType.BC840;
                                     ((BC840)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, TextInsertLinesOld[1]);
                                     Camera.HTTPRequest(((BC840)mContext_2).BuildCommand(IPM.IPCONTEXT_2, BC840.CGICommands.TextAndDate, 3, ""), NChttp, "GET");
+                                    break;
+                                case CameraType.BC950://CAMARA NUEVA
+                                    l.CType = CameraType.BC950;
+                                    ((BC950)mContext_2).Send(mContext_2, IPM.IPCONTEXT_2, 2, OpenLane, TextInsertLinesOld[1]);
                                     break;
                                 case CameraType.BC1103:
                                     l.CType = CameraType.BC1103;

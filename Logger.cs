@@ -80,6 +80,14 @@ namespace TextInsertion
                         Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>IFD820_" + data);
                     }
                     break;
+                case CameraType.BC950:
+                    using (StreamWriter SW = File.AppendText(LogPath))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        SW.WriteLine(Count.ToString() + "|" + DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>BC950_" + data);
+                        Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>BC950_" + data);
+                    }
+                    break;
                 case CameraType.BC1103:
                     using (StreamWriter SW = File.AppendText(LogPath))
                     {
@@ -187,7 +195,7 @@ namespace TextInsertion
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 SW.WriteLine(Count.ToString() + "|" + DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR => KO : " + e.Message + "\n" + e.StackTrace);
-                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR KO : " + e.Message + "\n" + e.StackTrace);
+                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + " 1>>ERROR KO : " + e.Message + "\n" + e.StackTrace);
             }
         }
         public static void ErrorMessages(ErrorEventArgs e)
@@ -199,7 +207,7 @@ namespace TextInsertion
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 SW.WriteLine(Count.ToString() + "|" + DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR => KO : " + e.GetException().Message + "\n" + e.GetException().StackTrace);
-                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR KO : " + e.GetException().Message + "\n" + e.GetException().StackTrace);
+                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + " 2>>ERROR KO : " + e.GetException().Message + "\n" + e.GetException().StackTrace);
             }
         }
         public static void ErrorMessages(UnhandledExceptionEventArgs e)
@@ -211,8 +219,8 @@ namespace TextInsertion
             using (StreamWriter SW = File.AppendText(LogPath))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                SW.WriteLine(Count.ToString() + "|" + DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR => KO : " + ex.Message + "\n" + ex.StackTrace);
-                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR KO : " + ex.Message + "\n" + ex.StackTrace);
+                SW.WriteLine(Count.ToString() + "|" + DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + ">>ERROR => KO : " + ex.Message + "\n" + ex.StackTrace + "\n" + ex.Source);
+                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy_HH:mm:ss.fff") + " 3>>ERROR KO : " + ex.Message + "\n" + ex.StackTrace);
             }
         }
         //Recibe un mensaje y lo registra en el Log y consola

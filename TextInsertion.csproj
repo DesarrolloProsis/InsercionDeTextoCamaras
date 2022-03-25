@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BC620.cs" />
+    <Compile Include="BC950.cs" />
     <Compile Include="FD1103.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="BC1103.cs" />

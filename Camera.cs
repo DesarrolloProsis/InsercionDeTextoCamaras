@@ -23,13 +23,14 @@ namespace TextInsertion
         IFD820 = 3,
         BC1103 = 4,
         FD1103 = 5,
+        BC950 = 6, //NUEVA
     }
     public abstract class Camera
     {
         IPAddress mIP;
         String[] mTextInsertlines;
         Camera mCAM;
-        static NetworkCredential NCcgi = new NetworkCredential("Admin", "1234");
+        static NetworkCredential NCcgi = new NetworkCredential("Admin", "Admin1234");
         static NetworkCredential NChttp = new NetworkCredential("admin", "admin1234");
         //No se usa
         //static CookieContainer c = new CookieContainer();
@@ -73,7 +74,7 @@ namespace TextInsertion
                     //Si la primera petición CGI devuelve una respuesta vacía, se utiliza la siguiente petición (URLcgiDomo)
                     if (WR.Item1 == null)
                     {
-                        WR = Camera.HTTPRequest(URLcgiDomo, NCcgi, WebRequestMethods.Http.Get); 
+                        WR = Camera.HTTPRequest(URLcgiDomo, NCcgi, WebRequestMethods.Http.Get);
                     }
                     if (((HttpWebResponse)WR.Item1).StatusDescription == "OK")//Continúa si hay una respuesta afirmativa de la petición http
                     {
@@ -100,6 +101,12 @@ namespace TextInsertion
                                 Program.l.CType = CameraType.IFD820;
                                 TextInsertion.Logger.MessageLog("Camera with IP:" + ip + " is a: IFD820 Camera");
                                 return CameraType.IFD820;
+                            }
+                            else if (WR.Item2.Contains("BC950"))//CAMARA NUEVA  --  Brand.ProdFullName
+                            {
+                                Program.l.CType = CameraType.BC950;
+                                TextInsertion.Logger.MessageLog("Camera with IP:" + ip + " is a: BC950 Camera");
+                                return CameraType.BC950;
                             }
                             else
                             {
@@ -193,6 +200,9 @@ namespace TextInsertion
                     Program.L.CType = CameraType.BC840;
                     //((BC620)Program.mContext).Send(Program.mContext, Program.IPM.IPCONTEXT, 1, );
                     break;
+                case CameraType.BC950://CAMARA NUEVA
+                    Program.L.CType = CameraType.BC950;
+                    break;
                 case CameraType.BC1103:
                     Program.L.CType = CameraType.BC1103;
                     ((BC1103)Program.mContext).SendTimeSync(Program.IPM.IPCONTEXT);
@@ -207,6 +217,9 @@ namespace TextInsertion
                 case CameraType.BC840:
                     Program.L.CType = CameraType.BC840;
                     //((BC620)Program.mContext).Send(Program.mContext, Program.IPM.IPCONTEXT, 1, );
+                    break;
+                case CameraType.BC950://CAMARA NUEVA
+                    Program.L.CType = CameraType.BC950;
                     break;
                 case CameraType.BC1103:
                     Program.L.CType = CameraType.BC1103;
@@ -290,7 +303,7 @@ namespace TextInsertion
                     try
                     {
                         //Regresa la respuesta del recurso de red
-                        response = (HttpWebResponse)Request.GetResponse();
+                        response = (HttpWebResponse)Request.GetResponse();//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         //Registra en el Log la petición Web
                         TextInsertion.Logger.MessageLog(URL);
                         //Asigna el flujo de datos del recurso de red solicitado
@@ -303,6 +316,8 @@ namespace TextInsertion
                     }
                     catch (Exception e)
                     {//Registra el error en el archivo de log
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("ERROR en HTTPRequest: " + URL);
                         TextInsertion.Logger.ErrorMessages(e);
                     }
                     break;
